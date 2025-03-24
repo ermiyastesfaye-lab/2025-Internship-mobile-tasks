@@ -37,19 +37,25 @@ class _ProductDetailState extends State<ProductDetail> {
                             left: 0,
                             right: 0,
                             child: AppBar(
+                              automaticallyImplyLeading: false,
                               backgroundColor: Colors.transparent,
                               elevation: 0,
                               toolbarHeight: kToolbarHeight,
-                              title: Container(
-                                width: 50,
-                                height: 50,
-                                padding: const EdgeInsets.all(10),
-                                decoration: const BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: Colors.white),
-                                child: const Icon(
-                                  Icons.arrow_back_ios_new_rounded,
-                                  color: Color.fromARGB(255, 63, 81, 243),
+                              title: GestureDetector(
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                                child: Container(
+                                  width: 50,
+                                  height: 50,
+                                  padding: const EdgeInsets.all(10),
+                                  decoration: const BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white),
+                                  child: const Icon(
+                                    Icons.arrow_back_ios_new_rounded,
+                                    color: Color.fromARGB(255, 63, 81, 243),
+                                  ),
                                 ),
                               ), // AppBar title
                             ),

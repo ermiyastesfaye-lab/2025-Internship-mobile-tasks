@@ -7,6 +7,17 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: const Color.fromARGB(255, 63, 81, 243),
+          onPressed: () {
+            Navigator.pushNamed(context, '/addproduct');
+          },
+          tooltip: "Add Product",
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+        ),
         backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
@@ -76,7 +87,9 @@ class Home extends StatelessWidget {
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(10)),
                     child: IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, '/searchproduct');
+                        },
                         icon: const Icon(
                           Icons.search,
                           color: Colors.grey,

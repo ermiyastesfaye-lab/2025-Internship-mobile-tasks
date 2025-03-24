@@ -8,9 +8,14 @@ class SearchProduct extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: const Icon(
-          Icons.arrow_back_ios,
-          color: Color.fromARGB(255, 63, 81, 243),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: Color.fromARGB(255, 63, 81, 243),
+          ),
         ),
         title: const Align(
             alignment: Alignment.center,
