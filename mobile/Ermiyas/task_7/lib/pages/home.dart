@@ -20,6 +20,7 @@ class Home extends StatelessWidget {
       ),
       backgroundColor: const Color.fromARGB(255, 40, 48, 57),
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: const Color.fromARGB(255, 40, 48, 57),
       ),
       body: Column(

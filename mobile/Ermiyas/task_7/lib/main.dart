@@ -13,6 +13,15 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: {
+            TargetPlatform.android:
+                FadeUpwardsPageTransitionsBuilder(), // For Android
+            TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(), // For iOS
+          },
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
