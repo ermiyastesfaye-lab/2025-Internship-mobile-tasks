@@ -19,7 +19,7 @@ class _AddWatchState extends State<AddWatch> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _imageUrlController = TextEditingController();
 
-  final Uuid _uuid = Uuid();
+  final Uuid _uuid = const Uuid();
   late String uniqueId;
 
   @override
@@ -105,6 +105,7 @@ class _AddWatchState extends State<AddWatch> {
                 _buildTextField(
                   'Image URL',
                   _imageUrlController,
+                  key: const Key('imageUrlField'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter an image URL';
@@ -115,6 +116,7 @@ class _AddWatchState extends State<AddWatch> {
                 _buildTextField(
                   'Name',
                   _nameController,
+                  key: const Key('nameField'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a watch name';
@@ -125,6 +127,7 @@ class _AddWatchState extends State<AddWatch> {
                 _buildTextField(
                   'Category',
                   _categoryController,
+                  key: const Key('categoryField'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a category';
@@ -136,6 +139,7 @@ class _AddWatchState extends State<AddWatch> {
                   'Price',
                   _priceController,
                   isNumeric: true,
+                  key: const Key('priceField'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a price';
@@ -150,6 +154,7 @@ class _AddWatchState extends State<AddWatch> {
                   'Description',
                   _descriptionController,
                   maxLines: 5,
+                  key: const Key('descriptionField'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a description';
@@ -188,7 +193,8 @@ class _AddWatchState extends State<AddWatch> {
 Widget _buildTextField(String label, TextEditingController controller,
     {bool isNumeric = false,
     int maxLines = 1,
-    String? Function(String?)? validator}) {
+    String? Function(String?)? validator,
+    required Key key}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -198,6 +204,7 @@ Widget _buildTextField(String label, TextEditingController controller,
       ),
       const SizedBox(height: 5),
       TextFormField(
+        key: key,
         controller: controller,
         keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
         style: const TextStyle(color: Colors.white),
