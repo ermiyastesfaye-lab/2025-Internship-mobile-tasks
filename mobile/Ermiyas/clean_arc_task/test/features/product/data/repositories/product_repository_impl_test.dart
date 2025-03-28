@@ -4,7 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:task_7/core/error/exceptions.dart';
 import 'package:task_7/core/error/failures.dart';
-import 'package:task_7/core/platform/network_info.dart';
+import 'package:task_7/core/network/network_info.dart';
 import 'package:task_7/features/product/data/datasources/product_local_data_source.dart';
 import 'package:task_7/features/product/data/datasources/product_remote_data_source.dart';
 import 'package:task_7/features/product/data/models/product_model.dart';

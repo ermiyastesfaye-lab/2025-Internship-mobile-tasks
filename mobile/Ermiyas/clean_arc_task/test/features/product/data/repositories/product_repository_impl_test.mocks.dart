@@ -6,7 +6,7 @@
 import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:task_7/core/platform/network_info.dart' as _i7;
+import 'package:task_7/core/network/network_info.dart' as _i7;
 import 'package:task_7/features/product/data/datasources/product_local_data_source.dart'
     as _i5;
 import 'package:task_7/features/product/data/datasources/product_remote_data_source.dart'
