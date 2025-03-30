@@ -4,6 +4,7 @@ import 'package:task_7/core/error/failures.dart';
 import 'package:task_7/core/network/network_info.dart';
 import 'package:task_7/features/product/data/datasources/product_local_data_source.dart';
 import 'package:task_7/features/product/data/datasources/product_remote_data_source.dart';
+import 'package:task_7/features/product/data/models/product_model.dart';
 import 'package:task_7/features/product/domain/entities/product.dart';
 
 class ProductRepositoryImpl {
@@ -30,7 +31,9 @@ class ProductRepositoryImpl {
     if (await networkInfo.isConnected) {
       try {
         final remoteproduct = await productRemoteDataSource.getProducts();
-        productLocalDataSource.cacheProducts(remoteproduct);
+        final productModels =
+            remoteproduct.map((product) => product as ProductModel).toList();
+        productLocalDataSource.cacheProducts(productModels);
         return Right(remoteproduct);
       } on ServerException {
         return Left(ServerFailure());
