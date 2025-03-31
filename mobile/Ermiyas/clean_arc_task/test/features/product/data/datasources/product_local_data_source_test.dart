@@ -47,7 +47,7 @@ void main() {
       expect(() => call(), throwsA(TypeMatcher<CacheException>()));
     });
   });
-  group('cacheNumberTrivia', () {
+  group('cacheProducts', () {
     final tProductModel = ProductModel(
       id: '1',
       name: 'Test Product',

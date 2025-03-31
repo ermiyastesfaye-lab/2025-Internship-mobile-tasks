@@ -15,25 +15,33 @@ void main() {
   late ProductRemoteDataSourceImpl dataSource;
   late MockClient mockHttpClient;
 
-  void setUpMockHttpClientFailure404() {
-    when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-      (_) async => http.Response('Something went wrong', 404),
-    );
-  }
-
   setUp(() {
     mockHttpClient = MockClient();
     dataSource = ProductRemoteDataSourceImpl(client: mockHttpClient);
   });
+
+  void setUpMockHttpClientResponse(
+      {required int statusCode, required String body}) {
+    when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
+      (_) async => http.Response(body, statusCode),
+    );
+    when(mockHttpClient.post(any,
+            body: anyNamed('body'), headers: anyNamed('headers')))
+        .thenAnswer((_) async => http.Response(body, statusCode));
+    when(mockHttpClient.put(any,
+            body: anyNamed('body'), headers: anyNamed('headers')))
+        .thenAnswer((_) async => http.Response(body, statusCode));
+    when(mockHttpClient.delete(any)).thenAnswer(
+      (_) async => http.Response(body, statusCode),
+    );
+  }
 
   group('getProducts', () {
     test('should return a list of products when the response code is 200',
         () async {
       final jsonString = await fixture('product_cached.json');
       final List<dynamic> jsonList = json.decode(jsonString);
-      when(mockHttpClient.get(any)).thenAnswer(
-        (_) async => http.Response(jsonString, 200),
-      );
+      setUpMockHttpClientResponse(statusCode: 200, body: jsonString);
 
       final result = await dataSource.getProducts();
 
@@ -45,7 +53,8 @@ void main() {
 
     test('should throw an exception when the response code is not 200',
         () async {
-      setUpMockHttpClientFailure404();
+      setUpMockHttpClientResponse(
+          statusCode: 404, body: 'Something went wrong');
       expect(() => dataSource.getProducts(), throwsException);
     });
   });
@@ -62,14 +71,20 @@ void main() {
 
     test('should return the added product when the response code is 200',
         () async {
-      when(mockHttpClient.post(any,
-              body: anyNamed('body'), headers: anyNamed('headers')))
-          .thenAnswer((_) async =>
-              http.Response(json.encode(tProductModel.toJson()), 200));
+      setUpMockHttpClientResponse(
+          statusCode: 200, body: json.encode(tProductModel.toJson()));
 
       final result = await dataSource.addProduct(tProductModel);
 
       expect(result, equals(tProductModel));
+    });
+
+    test('should throw an exception when the response code is not 200',
+        () async {
+      setUpMockHttpClientResponse(
+          statusCode: 400, body: 'Failed to add product');
+
+      expect(() => dataSource.addProduct(tProductModel), throwsException);
     });
   });
 
@@ -85,10 +100,8 @@ void main() {
 
     test('should return the updated product when the response code is 200',
         () async {
-      when(mockHttpClient.put(any,
-              body: anyNamed('body'), headers: anyNamed('headers')))
-          .thenAnswer((_) async =>
-              http.Response(json.encode(tProductModel.toJson()), 200));
+      setUpMockHttpClientResponse(
+          statusCode: 200, body: json.encode(tProductModel.toJson()));
 
       final result = await dataSource.editProduct(tProductModel);
 
@@ -108,9 +121,8 @@ void main() {
 
     test('should return the deleted product when the response code is 200',
         () async {
-      when(mockHttpClient.delete(any)).thenAnswer(
-        (_) async => http.Response(json.encode(tProductModel.toJson()), 200),
-      );
+      setUpMockHttpClientResponse(
+          statusCode: 200, body: json.encode(tProductModel.toJson()));
 
       final result = await dataSource.deleteProduct(tProductModel);
 
