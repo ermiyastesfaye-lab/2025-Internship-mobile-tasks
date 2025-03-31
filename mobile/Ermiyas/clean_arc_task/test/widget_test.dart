@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:task_7/main.dart'; // Replace with the correct path to AddWatch if necessary
+import 'package:task_7/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_7/features/product/presentation/pages/add_watch.dart';
 
