@@ -20,9 +20,16 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<Product> addProduct(Product product) async {
-    product as ProductModel;
+    final productModel = ProductModel(
+      id: product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      description: product.description,
+      imageUrl: product.imageUrl,
+    );
     final response = await client.post(Uri.parse("$_baseUrl/posts"),
-        body: json.encode(product.toJson()),
+        body: json.encode(productModel.toJson()),
         headers: {'Content-Type': 'application/json'});
     return ProductModel.fromJson(jsonDecode(response.body));
   }

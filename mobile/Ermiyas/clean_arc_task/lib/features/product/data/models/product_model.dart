@@ -10,12 +10,14 @@ class ProductModel extends Product {
       required super.imageUrl});
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-        id: json['id'],
-        name: json['name'],
-        category: json['category'],
-        price: json['price'],
-        description: json['description'],
-        imageUrl: json['imageUrl']);
+        id: json['id']?.toString() ?? '',
+        name: json['name'] ?? 'Unknown',
+        category: json['category'] ?? 'Uncategorized',
+        price: (json['price'] is num)
+            ? (json['price'] as num).toDouble()
+            : double.tryParse(json['price']?.toString() ?? '') ?? 0.0,
+        description: json['description'] ?? 'No description available',
+        imageUrl: json['imageUrl'] ?? 'https://via.placeholder.com/150');
   }
 
   Map<String, dynamic> toJson() {

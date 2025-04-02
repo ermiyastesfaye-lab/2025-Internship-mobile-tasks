@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:task_7/core/network/network_info.dart';
+import 'package:task_7/core/util/input_convertor.dart';
 import 'package:task_7/features/product/data/datasources/product_local_data_source.dart';
 import 'package:task_7/features/product/data/datasources/product_remote_data_source.dart';
 import 'package:task_7/features/product/data/repositories/product_repository_impl.dart';
@@ -28,6 +29,7 @@ Future<void> init() async {
     ),
   );
   // Use cases
+  sl.registerLazySingleton(() => InputConverter());
   sl.registerLazySingleton(() => GetProducts(repository: sl()));
   sl.registerLazySingleton(() => AddProduct(repository: sl()));
   sl.registerLazySingleton(() => EditProduct(repository: sl()));
