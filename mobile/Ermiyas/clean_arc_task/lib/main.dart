@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:task_7/features/product/presentation/pages/add_watch.dart';
 
 import 'package:task_7/features/product/presentation/pages/home.dart';
+import 'injection_container.dart' as di;
 
-void main() {
+void main() async {
+  await di.init();
   runApp(const MainApp());
 }
 

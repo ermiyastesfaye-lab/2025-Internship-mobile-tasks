@@ -51,7 +51,7 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
     result.fold(
       (failure) => emit(Error(message: 'Error in updating product')),
-      (_) => add(GetProductsEvent()), // Fetch updated products after editing
+      (_) => add(GetProductsEvent()),
     );
   }
 
