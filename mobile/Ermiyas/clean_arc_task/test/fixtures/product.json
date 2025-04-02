@@ -1,0 +1,8 @@
+{
+  "_id": "1",
+  "name": "Test Product",
+  "category": "Test Category",
+  "price": 10.0,
+  "description": "This is a test product",
+  "imageUrl": "http://example.com/test-product.jpg"
+}

@@ -1,7 +1,7 @@
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:task_7/model/watch.dart';
-import 'package:uuid/uuid.dart';
+import 'package:task_7/features/product/domain/entities/product.dart';
+import 'package:task_7/features/product/presentation/bloc/product_bloc.dart';
 
 class AddWatch extends StatefulWidget {
   const AddWatch({super.key});
@@ -19,19 +19,15 @@ class _AddWatchState extends State<AddWatch> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _imageUrlController = TextEditingController();
 
-  final Uuid _uuid = const Uuid();
-  late String uniqueId;
-
   @override
   void initState() {
     super.initState();
-    uniqueId = _uuid.v4();
   }
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final newWatch = Watch(
-        id: uniqueId,
+      final newWatch = Product(
+        null,
         name: _nameController.text,
         category: _categoryController.text,
         price: double.tryParse(_priceController.text) ?? 0.0,
@@ -39,11 +35,7 @@ class _AddWatchState extends State<AddWatch> {
         imageUrl: _imageUrlController.text,
       );
 
-      List<Watch> watchList = await _getWatchList();
-
-      watchList.add(newWatch);
-
-      await _saveWatchList(watchList);
+      await _saveWatchList(newWatch);
 
       _nameController.clear();
       _categoryController.clear();
@@ -53,26 +45,10 @@ class _AddWatchState extends State<AddWatch> {
     }
   }
 
-  Future<void> _saveWatchList(List<Watch> watchList) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String> watchJsonList =
-        watchList.map((watch) => watch.toJson()).toList();
-
-    await prefs.setStringList('watch_list', watchJsonList);
+  Future<void> _saveWatchList(Product watchList) async {
+    BlocProvider.of<ProductBloc>(context)
+        .add(AddProductEvent(product: watchList));
     Navigator.pushNamed(context, '/');
-  }
-
-  Future<List<Watch>> _getWatchList() async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    List<String>? watchJsonList = prefs.getStringList('watch_list');
-
-    if (watchJsonList != null) {
-      return watchJsonList.map((json) => Watch.fromJson(json)).toList();
-    } else {
-      return [];
-    }
   }
 
   @override
