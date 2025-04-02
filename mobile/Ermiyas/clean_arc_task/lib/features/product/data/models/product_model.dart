@@ -1,16 +1,14 @@
 import 'package:task_7/features/product/domain/entities/product.dart';
 
 class ProductModel extends Product {
-  const ProductModel(
-      {required super.id,
-      required super.name,
+  const ProductModel(super.id,
+      {required super.name,
       required super.category,
       required super.price,
       required super.description,
       required super.imageUrl});
   factory ProductModel.fromJson(Map<String, dynamic> json) {
-    return ProductModel(
-        id: json['id']?.toString() ?? '',
+    return ProductModel(json['_id']?.toString() ?? '',
         name: json['name'] ?? 'Unknown',
         category: json['category'] ?? 'Uncategorized',
         price: (json['price'] is num)
@@ -22,7 +20,6 @@ class ProductModel extends Product {
 
   Map<String, dynamic> toJson() {
     return {
-      "id": id,
       "name": name,
       "category": category,
       "price": price,

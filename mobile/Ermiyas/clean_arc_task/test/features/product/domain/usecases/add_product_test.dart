@@ -19,7 +19,7 @@ void main() {
   });
 
   final tProduct = Product(
-    id: '1',
+    '1',
     name: 'Test Product',
     category: 'Test Category',
     price: 10.0,

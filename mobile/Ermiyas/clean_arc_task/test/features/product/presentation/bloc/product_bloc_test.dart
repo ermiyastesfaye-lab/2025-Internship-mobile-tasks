@@ -46,15 +46,13 @@ void main() {
 
   group('GetProductsEvent', () {
     final List<Product> testProducts = [
-      Product(
-          id: '1',
+      Product('1',
           name: 'Product 1',
           category: 'Category',
           price: 10.0,
           description: 'Description',
           imageUrl: 'url'),
-      Product(
-          id: '2',
+      Product('2',
           name: 'Product 2',
           category: 'Category',
           price: 20.0,
@@ -91,8 +89,7 @@ void main() {
   });
 
   group('AddProductEvent', () {
-    final Product testProduct = Product(
-        id: '3',
+    final Product testProduct = Product('3',
         name: 'Product 3',
         category: 'Category',
         price: 15.0,
@@ -129,8 +126,7 @@ void main() {
   });
 
   group('DeleteProductEvent', () {
-    final Product testProduct = Product(
-        id: '3',
+    final Product testProduct = Product('3',
         name: 'Product 3',
         category: 'Category',
         price: 15.0,
@@ -165,23 +161,20 @@ void main() {
   });
 
   group('EditProductEvent', () {
-    final Product updatedProduct = Product(
-        id: '1',
+    final Product updatedProduct = Product('1',
         name: 'Updated Product',
         category: 'Category',
         price: 12.0,
         description: 'Updated',
         imageUrl: 'url');
     final List<Product> existingProducts = [
-      Product(
-          id: '1',
+      Product('1',
           name: 'Product 1',
           category: 'Category',
           price: 10.0,
           description: 'Description',
           imageUrl: 'url'),
-      Product(
-          id: '2',
+      Product('2',
           name: 'Product 2',
           category: 'Category',
           price: 20.0,

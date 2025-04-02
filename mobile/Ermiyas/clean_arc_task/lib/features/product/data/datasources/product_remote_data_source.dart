@@ -12,7 +12,7 @@ abstract class ProductRemoteDataSource {
 }
 
 class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
-  final String _baseUrl = "https://jsonplaceholder.typicode.com";
+  final String _baseUrl = "https://internship-ecommerce.onrender.com";
 
   final http.Client client;
 
@@ -21,26 +21,30 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
   @override
   Future<Product> addProduct(Product product) async {
     final productModel = ProductModel(
-      id: product.id,
+      product.id,
       name: product.name,
       category: product.category,
       price: product.price,
       description: product.description,
       imageUrl: product.imageUrl,
     );
-    final response = await client.post(Uri.parse("$_baseUrl/posts"),
+    final response = await client.post(Uri.parse("$_baseUrl/products"),
         body: json.encode(productModel.toJson()),
         headers: {'Content-Type': 'application/json'});
-    return ProductModel.fromJson(jsonDecode(response.body));
+    final responseData = jsonDecode(response.body);
+    return ProductModel.fromJson({...responseData, 'id': responseData['_id']});
   }
 
   @override
   Future<List<Product>> getProducts() async {
-    final response = await client.get(Uri.parse("$_baseUrl/posts"));
+    final response = await client.get(Uri.parse("$_baseUrl/products"));
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = json.decode(response.body);
-      return jsonList.map((json) => ProductModel.fromJson(json)).toList();
+      print(jsonList);
+      return jsonList
+          .map((json) => ProductModel.fromJson({...json, 'id': json['_id']}))
+          .toList();
     } else {
       throw Exception('Failed to fetch products');
     }
@@ -48,19 +52,28 @@ class ProductRemoteDataSourceImpl implements ProductRemoteDataSource {
 
   @override
   Future<Product> editProduct(Product product) async {
-    product as ProductModel;
+    final productModel = ProductModel(
+      product.id,
+      name: product.name,
+      category: product.category,
+      price: product.price,
+      description: product.description,
+      imageUrl: product.imageUrl,
+    );
     final response = await client.put(
-      Uri.parse("$_baseUrl/posts/${product.id}"),
-      body: json.encode(product.toJson()),
+      Uri.parse("$_baseUrl/products/${product.id}"),
+      body: json.encode(productModel.toJson()),
       headers: {'Content-Type': 'application/json'},
     );
-    return ProductModel.fromJson(jsonDecode(response.body));
+    final responseData = jsonDecode(response.body);
+    return ProductModel.fromJson({...responseData, 'id': responseData['_id']});
   }
 
   @override
   Future<Product> deleteProduct(Product product) async {
     final response =
-        await client.delete(Uri.parse("$_baseUrl/posts/$product.id"));
-    return ProductModel.fromJson(jsonDecode(response.body));
+        await client.delete(Uri.parse("$_baseUrl/products/${product.id}"));
+    final responseData = jsonDecode(response.body);
+    return ProductModel.fromJson({...responseData, 'id': responseData['_id']});
   }
 }

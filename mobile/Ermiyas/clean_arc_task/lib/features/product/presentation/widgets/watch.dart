@@ -48,12 +48,12 @@ class _WatchGridState extends State<WatchGrid> {
               final watch = _watchList[index];
               return GestureDetector(
                 onTap: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => WatchDetail(watch: watch),
-                  //   ),
-                  // );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => WatchDetail(watch: watch),
+                    ),
+                  );
                 },
                 child: Card(
                     color: const Color.fromARGB(255, 61, 69, 78),

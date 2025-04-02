@@ -6,127 +6,170 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:task_7/features/product/data/datasources/product_remote_data_source.dart';
 import 'package:task_7/features/product/data/models/product_model.dart';
+import 'package:task_7/features/product/domain/entities/product.dart';
 
-import '../../../../fixtures/fixture_reader.dart';
 import 'product_remote_data_source_test.mocks.dart';
 
 @GenerateMocks([http.Client])
 void main() {
   late ProductRemoteDataSourceImpl dataSource;
-  late MockClient mockHttpClient;
+  late MockClient mockClient;
 
   setUp(() {
-    mockHttpClient = MockClient();
-    dataSource = ProductRemoteDataSourceImpl(client: mockHttpClient);
+    mockClient = MockClient();
+    dataSource = ProductRemoteDataSourceImpl(client: mockClient);
   });
 
-  void setUpMockHttpClientResponse(
-      {required int statusCode, required String body}) {
-    when(mockHttpClient.get(any, headers: anyNamed('headers'))).thenAnswer(
-      (_) async => http.Response(body, statusCode),
-    );
-    when(mockHttpClient.post(any,
-            body: anyNamed('body'), headers: anyNamed('headers')))
-        .thenAnswer((_) async => http.Response(body, statusCode));
-    when(mockHttpClient.put(any,
-            body: anyNamed('body'), headers: anyNamed('headers')))
-        .thenAnswer((_) async => http.Response(body, statusCode));
-    when(mockHttpClient.delete(any)).thenAnswer(
-      (_) async => http.Response(body, statusCode),
-    );
-  }
+  const baseUrl = "https://internship-ecommerce.onrender.com";
 
-  group('getProducts', () {
-    test('should return a list of products when the response code is 200',
+  final testProduct = ProductModel(
+    '1',
+    name: 'Test Product',
+    category: 'Test Category',
+    price: 9.99,
+    description: 'Test Description',
+    imageUrl: 'http://test.com/image.jpg',
+  );
+
+  final testProductJson = testProduct.toJson();
+  final testProductResponse = json.encode({
+    ...testProductJson,
+    '_id': testProduct.id,
+  });
+
+  final testProductList = [
+    {
+      '_id': '1',
+      'name': 'Product 1',
+      'category': 'Category 1',
+      'price': 10.99,
+      'description': 'Description 1',
+      'imageUrl': 'http://test.com/image1.jpg',
+    },
+    {
+      '_id': '2',
+      'name': 'Product 2',
+      'category': 'Category 2',
+      'price': 20.99,
+      'description': 'Description 2',
+      'imageUrl': 'http://test.com/image2.jpg',
+    },
+  ];
+
+  group('ProductRemoteDataSourceImpl', () {
+    test('should add a product when the response is successful', () async {
+      // Arrange
+      when(mockClient.post(
+        Uri.parse('$baseUrl/products'),
+        body: json.encode(testProductJson),
+        headers: {'Content-Type': 'application/json'},
+      )).thenAnswer((_) async => http.Response(testProductResponse, 200));
+
+      // Act
+      final result = await dataSource.addProduct(testProduct);
+
+      // Assert
+      expect(result, isA<ProductModel>());
+      expect(result.id, testProduct.id);
+      verify(mockClient.post(
+        Uri.parse('$baseUrl/products'),
+        body: json.encode(testProductJson),
+        headers: {'Content-Type': 'application/json'},
+      ));
+    });
+
+    test('should throw an exception when add product fails', () async {
+      // Arrange
+      when(mockClient.post(
+        Uri.parse('$baseUrl/products'),
+        body: json.encode(testProductJson),
+        headers: {'Content-Type': 'application/json'},
+      )).thenAnswer((_) async => http.Response('Error', 500));
+
+      // Act & Assert
+      expect(() => dataSource.addProduct(testProduct), throwsException);
+    });
+
+    test('should return a list of products when the response is successful',
         () async {
-      final jsonString = await fixture('product_cached.json');
-      final List<dynamic> jsonList = json.decode(jsonString);
-      setUpMockHttpClientResponse(statusCode: 200, body: jsonString);
+      // Arrange
+      when(mockClient.get(Uri.parse('$baseUrl/products'))).thenAnswer(
+          (_) async => http.Response(json.encode(testProductList), 200));
 
+      // Act
       final result = await dataSource.getProducts();
 
-      final expectedProducts =
-          jsonList.map((json) => ProductModel.fromJson(json)).toList();
-
-      expect(result, equals(expectedProducts));
+      // Assert
+      expect(result, isA<List<Product>>());
+      expect(result.length, testProductList.length);
+      expect(result[0].id, testProductList[0]['_id']);
+      verify(mockClient.get(Uri.parse('$baseUrl/products')));
     });
 
-    test('should throw an exception when the response code is not 200',
-        () async {
-      setUpMockHttpClientResponse(
-          statusCode: 404, body: 'Something went wrong');
+    test('should throw an exception when get products fails', () async {
+      // Arrange
+      when(mockClient.get(Uri.parse('$baseUrl/products')))
+          .thenAnswer((_) async => http.Response('Error', 500));
+
+      // Act & Assert
       expect(() => dataSource.getProducts(), throwsException);
     });
-  });
 
-  group('addProduct', () {
-    final tProductModel = ProductModel(
-      id: '1',
-      name: 'Test Product',
-      category: 'Test Category',
-      price: 10.0,
-      description: 'This is a test product',
-      imageUrl: 'http://example.com/test-product.jpg',
-    );
+    test('should edit a product when the response is successful', () async {
+      // Arrange
+      when(mockClient.put(
+        Uri.parse('$baseUrl/products/${testProduct.id}'),
+        body: json.encode(testProductJson),
+        headers: {'Content-Type': 'application/json'},
+      )).thenAnswer((_) async => http.Response(testProductResponse, 200));
 
-    test('should return the added product when the response code is 200',
-        () async {
-      setUpMockHttpClientResponse(
-          statusCode: 200, body: json.encode(tProductModel.toJson()));
+      // Act
+      final result = await dataSource.editProduct(testProduct);
 
-      final result = await dataSource.addProduct(tProductModel);
-
-      expect(result, equals(tProductModel));
+      // Assert
+      expect(result, isA<ProductModel>());
+      expect(result.id, testProduct.id);
+      verify(mockClient.put(
+        Uri.parse('$baseUrl/products/${testProduct.id}'),
+        body: json.encode(testProductJson),
+        headers: {'Content-Type': 'application/json'},
+      ));
     });
 
-    test('should throw an exception when the response code is not 200',
-        () async {
-      setUpMockHttpClientResponse(
-          statusCode: 400, body: 'Failed to add product');
+    test('should throw an exception when edit product fails', () async {
+      // Arrange
+      when(mockClient.put(
+        Uri.parse('$baseUrl/products/${testProduct.id}'),
+        body: json.encode(testProductJson),
+        headers: {'Content-Type': 'application/json'},
+      )).thenAnswer((_) async => http.Response('Error', 500));
 
-      expect(() => dataSource.addProduct(tProductModel), throwsException);
+      // Act & Assert
+      expect(() => dataSource.editProduct(testProduct), throwsException);
     });
-  });
 
-  group('editProduct', () {
-    final tProductModel = ProductModel(
-      id: '1',
-      name: 'Updated Product',
-      category: 'Updated Category',
-      price: 20.0,
-      description: 'This is an updated product',
-      imageUrl: 'http://example.com/updated-product.jpg',
-    );
+    test('should delete a product when the response is successful', () async {
+      // Arrange
+      when(mockClient.delete(Uri.parse('$baseUrl/products/${testProduct.id}')))
+          .thenAnswer((_) async => http.Response(testProductResponse, 200));
 
-    test('should return the updated product when the response code is 200',
-        () async {
-      setUpMockHttpClientResponse(
-          statusCode: 200, body: json.encode(tProductModel.toJson()));
+      // Act
+      final result = await dataSource.deleteProduct(testProduct);
 
-      final result = await dataSource.editProduct(tProductModel);
-
-      expect(result, equals(tProductModel));
+      // Assert
+      expect(result, isA<ProductModel>());
+      expect(result.id, testProduct.id);
+      verify(
+          mockClient.delete(Uri.parse('$baseUrl/products/${testProduct.id}')));
     });
-  });
 
-  group('deleteProduct', () {
-    final tProductModel = ProductModel(
-      id: '1',
-      name: 'Test Product',
-      category: 'Test Category',
-      price: 10.0,
-      description: 'This is a test product',
-      imageUrl: 'http://example.com/test-product.jpg',
-    );
+    test('should throw an exception when delete product fails', () async {
+      // Arrange
+      when(mockClient.delete(Uri.parse('$baseUrl/products/${testProduct.id}')))
+          .thenAnswer((_) async => http.Response('Error', 500));
 
-    test('should return the deleted product when the response code is 200',
-        () async {
-      setUpMockHttpClientResponse(
-          statusCode: 200, body: json.encode(tProductModel.toJson()));
-
-      final result = await dataSource.deleteProduct(tProductModel);
-
-      expect(result, equals(tProductModel));
+      // Act & Assert
+      expect(() => dataSource.deleteProduct(testProduct), throwsException);
     });
   });
 }
